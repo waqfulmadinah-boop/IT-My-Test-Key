@@ -8,6 +8,7 @@ import android.os.Vibrator
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -122,7 +123,10 @@ class KeyboardImeService : InputMethodService() {
     }
 
     private fun notifyJsStartInput() {
-        val subtype = currentInputMethodSubtype?.locale ?: DEFAULT_SUBTYPE
+        val subtype = getSystemService(InputMethodManager::class.java)
+            ?.currentInputMethodSubtype
+            ?.languageTag
+            ?: DEFAULT_SUBTYPE
         evaluateJs("window.__gboardIme && window.__gboardIme.onStartInput(${quote(subtype)})")
     }
 
