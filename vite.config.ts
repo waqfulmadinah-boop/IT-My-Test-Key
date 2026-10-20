@@ -1,14 +1,16 @@
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import {defineConfig} from 'vite';
+import {defineConfig, type PluginOption} from 'vite';
 import {VitePWA} from 'vite-plugin-pwa';
 
-export default defineConfig(() => {
-  return {
-    plugins: [
-      react(),
-      tailwindcss(),
+export default defineConfig(({mode}) => {
+  const isIme = mode === 'ime';
+
+  const plugins: PluginOption[] = [react(), tailwindcss()];
+
+  if (!isIme) {
+    plugins.push(
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'icon.svg'],
@@ -52,7 +54,12 @@ export default defineConfig(() => {
           type: 'module',
         },
       }),
-    ],
+    );
+  }
+
+  return {
+    base: isIme ? './' : '/',
+    plugins,
     resolve: {
       alias: {
         '@': path.resolve('.'),

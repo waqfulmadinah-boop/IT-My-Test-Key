@@ -29,21 +29,30 @@ export const SystemKeyboardModal: React.FC<SystemKeyboardModalProps> = ({
   if (!isOpen) return null;
 
   const manifestCode = `<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.waqfulmadinah.gboardmulti">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="জি-বোর্ড বহুভাষিক কিবোর্ড"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:label="@string/app_name"
+        android:theme="@style/Theme.GBoardIme">
 
-        <!-- Android Input Method Service (IME) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <service
-            android:name=".GboardMultiIME"
-            android:label="জি-বোর্ড বহুভাষিক (বাংলা, আরবি, ইংরেজি, উর্দু)"
-            android:permission="android.permission.BIND_INPUT_METHOD"
-            android:exported="true">
+            android:name=".KeyboardImeService"
+            android:exported="true"
+            android:label="@string/ime_name"
+            android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
                 <action android:name="android.view.InputMethod" />
             </intent-filter>
@@ -51,51 +60,43 @@ export const SystemKeyboardModal: React.FC<SystemKeyboardModalProps> = ({
                 android:name="android.view.im"
                 android:resource="@xml/method" />
         </service>
-
-        <!-- Settings / Standalone Activity -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 </manifest>`;
 
   const serviceCode = `package com.waqfulmadinah.gboardmulti
 
 import android.inputmethodservice.InputMethodService
-import android.view.View
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
-import android.webkit.WebViewClient
-import android.webkit.JavascriptInterface
+import android.widget.FrameLayout
+import androidx.webkit.WebViewAssetLoader
+import androidx.webkit.WebViewClientCompat
 
-class GboardMultiIME : InputMethodService() {
+class KeyboardImeService : InputMethodService() {
     private var webView: WebView? = null
+    private val assetLoader by lazy {
+        WebViewAssetLoader.Builder()
+            .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
+            .build()
+    }
 
     override fun onCreateInputView(): View {
         webView = WebView(this).apply {
             settings.javaScriptEnabled = true
             settings.domStorageEnabled = true
-            addJavascriptInterface(WebAppInterface(), "AndroidIME")
-            // Loads the optimized local HTML/JS keyboard bundle
-            loadUrl("file:///android_asset/keyboard/index.html")
+            addJavascriptInterface(webBridge(), "AndroidIME")
+            webViewClient = object : WebViewClientCompat() {
+                override fun shouldInterceptRequest(
+                    view: WebView,
+                    request: WebResourceRequest
+                ): WebResourceResponse? =
+                    assetLoader.shouldInterceptRequest(request.url)
+            }
+            // Offline bundle copied from dist/ by npm run build:ime
+            loadUrl("https://appassets.androidplatform.net/assets/www/index.html?ime=1")
         }
         return webView!!
-    }
-
-    inner class WebAppInterface {
-        @JavascriptInterface
-        fun commitText(text: String) {
-            currentInputConnection?.commitText(text, 1)
-        }
-
-        @JavascriptInterface
-        fun deleteBackward() {
-            currentInputConnection?.deleteSurroundingText(1, 0)
-        }
     }
 }`;
 
@@ -119,7 +120,7 @@ class GboardMultiIME : InputMethodService() {
 === AndroidManifest.xml ===
 ${manifestCode}
 
-=== GboardMultiIME.kt ===
+=== KeyboardImeService.kt ===
 ${serviceCode}
 `;
     const blob = new Blob([projectSummary], { type: 'text/plain;charset=utf-8' });
@@ -221,7 +222,7 @@ ${serviceCode}
                   <span>উপায় ২: আসল সিস্টেম কিবোর্ড হিসেবে ইনস্টল (Android IME APK)</span>
                 </div>
                 <p className="text-[11px] text-slate-300 leading-relaxed">
-                  আপনি যদি চান এই কিবোর্ডটি ফোনের সেটিংসে <strong>"Default Keyboard"</strong> হিসেবে দেখা যাবে এবং সব অ্যাপের ভেতর নিচ থেকে উঠে আসবে—তার জন্য প্রস্তুত <strong>Android InputMethodService</strong> কোড আমরা তৈরি করে দিয়েছি (পাশের ট্যাবে দেখুন)। এটি দিয়ে বিনামূল্যে Android Studio অথবা PhoneGap/Capacitor দিয়ে সরাসরি <code>.apk</code> তৈরি করে ফোনে ইনস্টল করা যাবে।
+                  আপনি যদি চান এই কিবোর্ডটি ফোনের সেটিংসে <strong>"Default Keyboard"</strong> হিসেবে দেখা যাবে এবং সব অ্যাপের ভেতর নিচ থেকে উঠে আসবে—তার জন্য সম্পূর্ণ <strong>Android InputMethodService</strong> সোর্স এই রিপোজিটরির <code>android/</code> ফোল্ডারে প্রস্তুত আছে (পাশের ট্যাবে মূল কোড দেখুন)। ওয়েব UI বিল্ড করে অ্যাপের ভেতরে বান্ডল করা হয়, তাই ইন্টারনেট ছাড়াই কাজ করে। <strong>main</strong> ব্রাঞ্চে পরিবর্তন পুশ হলে GitHub Actions স্বয়ংক্রিয়ভাবে ডিবাগ <code>.apk</code> তৈরি করে—Actions রানের আর্টিফ্যাক্ট <code>gboard-ime-debug-apk</code> থেকে ডাউনলোড করে ফোনে ইনস্টল করুন, তারপর Settings → Languages &amp; input → On-screen keyboard থেকে কিবোর্ডটি চালু ও নির্বাচন করুন।
                 </p>
                 <button
                   onClick={downloadAndroidProjectZip}
@@ -236,7 +237,7 @@ ${serviceCode}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[11px] text-slate-400">
-                  {activeTab === 'manifest' ? 'AndroidManifest.xml' : 'GboardMultiIME.kt'}
+                  {activeTab === 'manifest' ? 'AndroidManifest.xml' : 'KeyboardImeService.kt'}
                 </span>
                 <button
                   onClick={handleCopyCode}

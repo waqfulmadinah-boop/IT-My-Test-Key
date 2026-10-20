@@ -24,6 +24,12 @@ import { PWAInstallModal } from './components/PWAInstallModal';
 import { PhoneConnectModal } from './components/PhoneConnectModal';
 import { SystemKeyboardModal } from './components/SystemKeyboardModal';
 import { usePWAInstall } from './hooks/usePWAInstall';
+import {
+  LANGUAGE_SUBTYPES,
+  getImeBridge,
+  isNativeIme,
+  languageFromSubtype,
+} from './utils/nativeIme';
 
 const DEFAULT_SETTINGS: KeyboardSettings = {
   soundEnabled: true,
@@ -45,6 +51,10 @@ export default function App() {
   const [currentSubTab, setCurrentSubTab] = useState<string>('all-serial');
   const [activeFont, setActiveFont] = useState<string>('bengali');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // When running inside the Android IME WebView, keys must be sent to the
+  // native input connection instead of the local notepad.
+  const [isImeMode] = useState<boolean>(() => isNativeIme());
 
   // Auto-detect mobile devices so we NEVER show a fake phone frame on real phones
   const [isMobileDevice, setIsMobileDevice] = useState(false);
@@ -106,7 +116,36 @@ export default function App() {
       setCurrentSubTab('alphabet');
       setActiveFont('urdu');
     }
+    getImeBridge()?.setLanguage?.(LANGUAGE_SUBTYPES[newLang]);
   };
+
+  // Expose a native -> JS handler so the Android IME service can tell us
+  // which keyboard subtype (bn-BD / ar / ur / en-US) is currently active.
+  useEffect(() => {
+    if (!isImeMode) return;
+    window.__gboardIme = {
+      onStartInput: (subtype?: string) => {
+        const lang = languageFromSubtype(subtype);
+        if (lang) handleLanguageChange(lang);
+      },
+      onFinishInput: () => {
+        setIsSettingsOpen(false);
+        setIsInstallOpen(false);
+      },
+      onSelectionChanged: () => {
+        // Native owns the input connection while inside the IME WebView.
+      },
+      setLanguage: (subtype?: string) => {
+        const lang = languageFromSubtype(subtype);
+        if (lang) handleLanguageChange(lang);
+      },
+    };
+    getImeBridge()?.notifyReady?.();
+    return () => {
+      window.__gboardIme = undefined;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isImeMode]);
 
   // Push new state to history for undo/redo
   const pushToHistory = useCallback((newText: string) => {
@@ -119,6 +158,11 @@ export default function App() {
 
   // Key press handler (insert at cursor position)
   const handleKeyPress = (char: string) => {
+    const bridge = getImeBridge();
+    if (isImeMode && bridge) {
+      bridge.commitText?.(char);
+      return;
+    }
     const before = text.slice(0, cursorPosition);
     const after = text.slice(cursorPosition);
     const newText = before + char + after;
@@ -130,6 +174,11 @@ export default function App() {
 
   // Backspace handler
   const handleBackspace = () => {
+    const bridge = getImeBridge();
+    if (isImeMode && bridge) {
+      bridge.deleteBackward?.();
+      return;
+    }
     if (cursorPosition === 0) return;
     const before = text.slice(0, cursorPosition - 1);
     const after = text.slice(cursorPosition);
@@ -146,6 +195,11 @@ export default function App() {
 
   // Enter handler
   const handleEnter = () => {
+    const bridge = getImeBridge();
+    if (isImeMode && bridge) {
+      bridge.sendEnter?.();
+      return;
+    }
     handleKeyPress('\n');
   };
 
@@ -194,6 +248,28 @@ export default function App() {
   };
 
   const currentThemeConfig = THEMES[settings.theme] || THEMES['gboard-dark'];
+
+  // Native Android IME mode: render only the keyboard surface, docked to the bottom.
+  if (isImeMode) {
+    return (
+      <div className="w-full h-[100dvh] overflow-hidden flex flex-col justify-end select-none bg-slate-950">
+        <GboardKeyboard
+          currentLanguage={currentLanguage}
+          onLanguageChange={handleLanguageChange}
+          currentSubTab={currentSubTab}
+          onSubTabChange={setCurrentSubTab}
+          settings={settings}
+          theme={currentThemeConfig}
+          onKeyPress={handleKeyPress}
+          onBackspace={handleBackspace}
+          onEnter={handleEnter}
+          onSpace={handleSpace}
+          searchQuery=""
+          imeMode
+        />
+      </div>
+    );
+  }
 
   return (
     <div className={`w-full ${isMobileDevice ? 'h-[100dvh]' : 'min-h-screen'} bg-slate-950 text-slate-100 flex flex-col items-center justify-between select-none overflow-hidden`}>

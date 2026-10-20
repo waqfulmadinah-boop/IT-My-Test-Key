@@ -13,7 +13,7 @@ import {
   Check
 } from 'lucide-react';
 import { LanguageId, KeyboardSettings } from '../types/keyboard';
-import { LANGUAGES } from '../data/keyboardData';
+import { LANGUAGES, getLanguageSubTabs } from '../data/keyboardData';
 import { ThemeConfig } from '../utils/themeStyles';
 
 interface GboardToolbarProps {
@@ -53,42 +53,7 @@ export const GboardToolbar: React.FC<GboardToolbarProps> = ({
   isInstallable,
   isInstalled,
 }) => {
-  // Tabs for each language
-  const getSubTabs = () => {
-    switch (currentLanguage) {
-      case 'bengali':
-        return [
-          { id: 'all-serial', label: '১-৪৯ বর্ণমালা' },
-          { id: 'conjuncts', label: 'যুক্ত হরফ (ক্ষ,ত্র..)' },
-          { id: 'kars', label: 'কার ও চিহ্ন' },
-          { id: 'numbers', label: 'সংখ্যা ও যতি' },
-        ];
-      case 'arabic':
-        return [
-          { id: 'alphabet', label: 'الحروف (ا-ي)' },
-          { id: 'alif-variants', label: 'আলিফের রূপ (أ,إ,أُ..)' },
-          { id: 'tashkeel', label: 'হরকত ও তাশদীদ (َ ِ ُ ْ ّ)' },
-          { id: 'honorifics', label: 'ইসলামিক চিহ্ন (ﷺ..)' },
-          { id: 'numbers', label: 'الأرقام (١٢٣)' },
-        ];
-      case 'english':
-        return [
-          { id: 'lower', label: 'lowercase (a-z)' },
-          { id: 'upper', label: 'UPPERCASE (A-Z)' },
-          { id: 'symbols', label: '?123 & Symbols' },
-        ];
-      case 'urdu':
-        return [
-          { id: 'alphabet', label: 'حروف تہجی (ا-ے)' },
-          { id: 'signs', label: 'اعراب و علامات (ؔ ؐ ؕ)' },
-          { id: 'digits', label: 'اعداد (۱۲۳)' },
-        ];
-      default:
-        return [];
-    }
-  };
-
-  const subTabs = getSubTabs();
+  const subTabs = getLanguageSubTabs(currentLanguage);
 
   return (
     <div className={`w-full ${theme.toolbarBg} border-b select-none flex flex-col transition-colors duration-200`}>

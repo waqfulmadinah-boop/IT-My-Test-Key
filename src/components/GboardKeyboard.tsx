@@ -26,7 +26,8 @@ import {
   URDU_ALPHABET,
   URDU_SIGNS_TASHKEEL,
   URDU_DIGITS,
-  LANGUAGES
+  LANGUAGES,
+  getLanguageSubTabs
 } from '../data/keyboardData';
 import { KeyButton } from './KeyButton';
 import { ThemeConfig } from '../utils/themeStyles';
@@ -44,6 +45,7 @@ interface GboardKeyboardProps {
   onEnter: () => void;
   onSpace: () => void;
   searchQuery: string;
+  imeMode?: boolean;
 }
 
 export const GboardKeyboard: React.FC<GboardKeyboardProps> = ({
@@ -58,6 +60,7 @@ export const GboardKeyboard: React.FC<GboardKeyboardProps> = ({
   onEnter,
   onSpace,
   searchQuery,
+  imeMode = false,
 }) => {
   const backspaceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const backspaceIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -159,13 +162,45 @@ export const GboardKeyboard: React.FC<GboardKeyboardProps> = ({
 
   // Get current language native name for spacebar
   const currentLangMeta = LANGUAGES.find((l) => l.id === currentLanguage);
+  const subTabs = getLanguageSubTabs(currentLanguage);
 
   return (
     <div
-      className={`w-full ${theme.keyboardChassis} border-t px-1 sm:px-2 pt-1.5 pb-2.5 flex flex-col select-none touch-manipulation transition-colors duration-200`}
+      className={`w-full ${theme.keyboardChassis} ${
+        imeMode ? 'border-t-0 pt-1 pb-1.5' : 'border-t pt-1.5 pb-2.5'
+      } px-1 sm:px-2 flex flex-col select-none touch-manipulation transition-colors duration-200`}
     >
+      {/* Compact sub-tab strip (native IME only) */}
+      {imeMode && (
+        <div className="w-full flex items-center gap-1 overflow-x-auto overflow-y-hidden scrollbar-thin pb-1 px-0.5 shrink-0">
+          {subTabs.map((tab) => {
+            const isActive = currentSubTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => onSubTabChange(tab.id)}
+                className={`shrink-0 h-7 px-2 rounded-md text-[11px] font-medium border whitespace-nowrap transition-all active:scale-95 ${
+                  isActive
+                    ? `${theme.accentBg} ${theme.accentText} ${theme.keyBorder}`
+                    : `${theme.actionKeyBg} ${theme.actionKeyText} ${theme.keyBorder} opacity-80`
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
       {/* Keyboard Grid */}
-      <div className="w-full flex-1 min-h-[170px] max-h-[260px] overflow-y-auto overflow-x-hidden p-1 scrollbar-thin">
+      <div
+        className={
+          imeMode
+            ? 'w-full flex-1 min-h-0 max-h-none overflow-y-auto overflow-x-hidden p-1 scrollbar-thin'
+            : 'w-full flex-1 min-h-[170px] max-h-[260px] overflow-y-auto overflow-x-hidden p-1 scrollbar-thin'
+        }
+      >
         {keys.length === 0 ? (
           <div className="w-full h-32 flex flex-col items-center justify-center text-slate-400 text-xs gap-1">
             <span>কোনো বর্ণ পাওয়া যায়নি</span>

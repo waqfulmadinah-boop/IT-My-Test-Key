@@ -493,3 +493,39 @@ export const LANGUAGES: { id: LanguageId; name: string; nativeName: string; font
   { id: 'english', name: 'English', nativeName: 'English', fontClass: 'font-english', flag: '🇬🇧' },
   { id: 'urdu', name: 'Urdu', nativeName: 'اردو', fontClass: 'font-urdu', flag: '🇵🇰' },
 ];
+
+// -------------------------------------------------------------
+// Sub-tab definitions (shared by web toolbar and Android IME strip)
+// -------------------------------------------------------------
+export interface SubTabDef {
+  id: string;
+  label: string;
+}
+
+const SUB_TABS: Record<LanguageId, SubTabDef[]> = {
+  bengali: [
+    { id: 'all-serial', label: '১-৪৯ বর্ণমালা' },
+    { id: 'conjuncts', label: 'যুক্ত হরফ (ক্ষ,ত্র..)' },
+    { id: 'kars', label: 'কার ও চিহ্ন' },
+    { id: 'numbers', label: 'সংখ্যা ও যতি' },
+  ],
+  arabic: [
+    { id: 'alphabet', label: 'الحروف (ا-ي)' },
+    { id: 'alif-variants', label: 'আলিফের রূপ (أ,إ,أُ..)' },
+    { id: 'tashkeel', label: 'হরকত ও তাশদীদ (َ ِ ُ ْ ّ)' },
+    { id: 'honorifics', label: 'ইসলামিক চিহ্ন (ﷺ..)' },
+    { id: 'numbers', label: 'الأرقام (١٢٣)' },
+  ],
+  english: [
+    { id: 'lower', label: 'lowercase (a-z)' },
+    { id: 'upper', label: 'UPPERCASE (A-Z)' },
+    { id: 'symbols', label: '?123 & Symbols' },
+  ],
+  urdu: [
+    { id: 'alphabet', label: 'حروف تہجی (ا-ے)' },
+    { id: 'signs', label: 'اعراب و علامات (ؔ ؐ ؕ)' },
+    { id: 'digits', label: 'اعداد (۱۲۳)' },
+  ],
+};
+
+export const getLanguageSubTabs = (language: LanguageId): SubTabDef[] => SUB_TABS[language] ?? SUB_TABS.bengali;
