@@ -22,8 +22,6 @@ jobs:
   build:
     name: Build debug APK
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout
@@ -69,9 +67,7 @@ jobs:
           gradle-version: '8.9'
 
       - name: Build APK
-        run: |
-          set -o pipefail
-          gradle -p android assembleDebug --no-daemon --stacktrace 2>&1 | tee "$RUNNER_TEMP/build.log"
+        run: gradle -p android assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
@@ -79,18 +75,3 @@ jobs:
           name: gboard-ime-debug-apk
           path: android/app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
-
-      - name: Record failed build log
-        if: failure()
-        run: |
-          mkdir -p ci-logs
-          if [ -f "$RUNNER_TEMP/build.log" ]; then
-            tail -n 250 "$RUNNER_TEMP/build.log" > ci-logs/last-build.log
-          else
-            echo "No build log captured." > ci-logs/last-build.log
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f ci-logs/last-build.log
-          git commit -m "ci: record failed build log [skip ci]"
-          git push
