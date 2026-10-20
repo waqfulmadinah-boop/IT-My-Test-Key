@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="brandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="512" height="512" rx="100" fill="url(#bgGrad)"/>
+
+  <!-- Inner Keyboard Surface -->
+  <rect x="40" y="80" width="432" height="352" rx="36" fill="#1e293b" stroke="#334155" stroke-width="4" filter="url(#shadow)"/>
+
+  <!-- Top Accent Bar -->
+  <rect x="64" y="104" width="384" height="40" rx="12" fill="#0f172a"/>
+  <circle cx="90" cy="124" r="8" fill="#3b82f6"/>
+  <circle cx="118" cy="124" r="8" fill="#10b981"/>
+  <circle cx="146" cy="124" r="8" fill="#f59e0b"/>
+  <rect x="180" y="118" width="80" height="12" rx="6" fill="#334155"/>
+  <rect x="360" y="114" width="64" height="20" rx="10" fill="url(#brandGrad)"/>
+
+  <!-- Key Rows -->
+  <!-- Row 1: Bangla, Arabic, Urdu, English Showcase Keys -->
+  <rect x="64" y="164" width="76" height="68" rx="14" fill="#334155"/>
+  <text x="102" y="210" font-family="'Hind Siliguri', sans-serif" font-size="36" font-weight="bold" fill="#38bdf8" text-anchor="middle">ক</text>
+
+  <rect x="150" y="164" width="76" height="68" rx="14" fill="#334155"/>
+  <text x="188" y="210" font-family="'Amiri', serif" font-size="38" font-weight="bold" fill="#4ade80" text-anchor="middle">ض</text>
+
+  <rect x="236" y="164" width="76" height="68" rx="14" fill="#334155"/>
+  <text x="274" y="210" font-family="'Noto Nastaliq Urdu', serif" font-size="34" font-weight="bold" fill="#fbbf24" text-anchor="middle">ٹ</text>
+
+  <rect x="322" y="164" width="76" height="68" rx="14" fill="#334155"/>
+  <text x="360" y="210" font-family="'Inter', sans-serif" font-size="34" font-weight="bold" fill="#f43f5e" text-anchor="middle">A</text>
+
+  <!-- Row 2 -->
+  <rect x="64" y="244" width="60" height="64" rx="12" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+  <text x="94" y="286" font-family="'Hind Siliguri', sans-serif" font-size="28" fill="#94a3b8" text-anchor="middle">অ</text>
+
+  <rect x="134" y="244" width="60" height="64" rx="12" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+  <text x="164" y="286" font-family="'Amiri', serif" font-size="28" fill="#94a3b8" text-anchor="middle">أ</text>
+
+  <rect x="204" y="244" width="60" height="64" rx="12" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+  <text x="234" y="286" font-family="'Noto Nastaliq Urdu', serif" font-size="28" fill="#94a3b8" text-anchor="middle">ے</text>
+
+  <rect x="274" y="244" width="60" height="64" rx="12" fill="#1e293b" stroke="#475569" stroke-width="2"/>
+  <text x="304" y="286" font-family="'Inter', sans-serif" font-size="28" fill="#94a3b8" text-anchor="middle">z</text>
+
+  <rect x="344" y="244" width="104" height="64" rx="12" fill="#2563eb"/>
+  <path d="M374 276 L390 262 L390 271 L418 271 L418 281 L390 281 L390 290 Z" fill="#ffffff"/>
+
+  <!-- Row 3: Spacebar & Function Keys -->
+  <rect x="64" y="320" width="70" height="54" rx="12" fill="#334155"/>
+  <text x="99" y="355" font-family="sans-serif" font-size="20" fill="#94a3b8" text-anchor="middle">?123</text>
+
+  <rect x="144" y="320" width="56" height="54" rx="12" fill="#334155"/>
+  <circle cx="172" cy="347" r="14" fill="none" stroke="#94a3b8" stroke-width="2"/>
+  <path d="M158 347 Q172 333 186 347 Q172 361 158 347 Z" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+
+  <!-- Spacebar with Multi-Language Badge -->
+  <rect x="210" y="320" width="168" height="54" rx="12" fill="#334155"/>
+  <text x="294" y="354" font-family="'Hind Siliguri', sans-serif" font-size="16" fill="#cbd5e1" text-anchor="middle">বাংলা • EN • عربي • اردو</text>
+
+  <rect x="388" y="320" width="60" height="54" rx="12" fill="#3b82f6"/>
+  <path d="M414 340 L422 347 L414 354" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+</svg>

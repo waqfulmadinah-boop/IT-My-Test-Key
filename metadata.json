@@ -1,0 +1,6 @@
+{
+  "name": "জি-বোর্ড বহুভাষিক কিবোর্ড (Gboard Multi-Keyboard)",
+  "description": "বাংলা, আরবি, ইংরেজি ও উর্দু ভাষার সকল বর্ণ, যুক্তাক্ষর, হরকত ও চিহ্নসহ পূর্ণাঙ্গ জি-বোর্ড স্টাইল মোবাইল কিবোর্ড অ্যাপ্লিকেশন।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
