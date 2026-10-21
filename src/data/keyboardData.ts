@@ -1,5 +1,17 @@
 import { KeyItem, LanguageId } from '../types/keyboard';
 
+// Shared symbol set used by every "?123" sheet
+const SYMBOL_SHEET: string[] = [
+  '@', '#', '$', '%', '&', '*', '-', '+', '=', '/', '\\', '|', '_', '~', '^', '<', '>', '[', ']', '{', '}', '"', "'", '`',
+];
+
+const makeSymbolKeys = (prefix: string, skip: string[] = []): KeyItem[] =>
+  SYMBOL_SHEET.filter((symbol) => !skip.includes(symbol)).map((symbol, index) => ({
+    id: `${prefix}${index + 1}`,
+    label: symbol,
+    insertText: symbol,
+  }));
+
 export interface LanguageTab {
   id: string;
   nameBn: string;
@@ -71,63 +83,71 @@ export const BENGALI_CONSONANTS: KeyItem[] = [
 // All 49 (50) Bengali alphabet in exact serial order
 export const BENGALI_ALL_49_SERIAL: KeyItem[] = [...BENGALI_VOWELS, ...BENGALI_CONSONANTS];
 
-// Bengali Common Conjuncts (যুক্তাক্ষর - requested directly as normal keys)
-export const BENGALI_CONJUNCTS: KeyItem[] = [
-  { id: 'bn-j1', label: 'ক্ষ', insertText: 'ক্ষ', subLabel: 'ক+ষ' },
-  { id: 'bn-j2', label: 'ত্র', insertText: 'ত্র', subLabel: 'ত+র' },
-  { id: 'bn-j3', label: 'ত্রু', insertText: 'ত্রু', subLabel: 'ত+র+উ' },
-  { id: 'bn-j4', label: 'ক্ত', insertText: 'ক্ত', subLabel: 'ক+ত' },
-  { id: 'bn-j5', label: 'জ্ঞ', insertText: 'জ্ঞ', subLabel: 'জ+ঞ' },
-  { id: 'bn-j6', label: 'ঙ্ক', insertText: 'ঙ্ক', subLabel: 'ঙ+ক' },
-  { id: 'bn-j7', label: 'ঙ্গ', insertText: 'ঙ্গ', subLabel: 'ঙ+গ' },
-  { id: 'bn-j8', label: 'ঞ্চ', insertText: 'ঞ্চ', subLabel: 'ঞ+চ' },
-  { id: 'bn-j9', label: 'ঞ্ছ', insertText: 'ঞ্ছ', subLabel: 'ঞ+ছ' },
-  { id: 'bn-j10', label: 'ঞ্জ', insertText: 'ঞ্জ', subLabel: 'ঞ+জ' },
-  { id: 'bn-j11', label: 'ষ্ণ', insertText: 'ষ্ণ', subLabel: 'ষ+ণ' },
-  { id: 'bn-j12', label: 'ষ্ঠ', insertText: 'ষ্ঠ', subLabel: 'ষ+ঠ' },
-  { id: 'bn-j13', label: 'ষ্ট', insertText: 'ষ্ট', subLabel: 'ষ+ট' },
-  { id: 'bn-j14', label: 'ণ্ড', insertText: 'ণ্ড', subLabel: 'ণ+ড' },
-  { id: 'bn-j15', label: 'ণ্ট', insertText: 'ণ্ট', subLabel: 'ণ+ট' },
-  { id: 'bn-j16', label: 'ত্ত', insertText: 'ত্ত', subLabel: 'ত+ত' },
-  { id: 'bn-j17', label: 'ত্থ', insertText: 'ত্থ', subLabel: 'ত+থ' },
-  { id: 'bn-j18', label: 'ত্ম', insertText: 'ত্ম', subLabel: 'ত+ম' },
-  { id: 'bn-j19', label: 'ন্দ', insertText: 'ন্দ', subLabel: 'ন+দ' },
-  { id: 'bn-j20', label: 'ন্ধ', insertText: 'ন্ধ', subLabel: 'ন+ধ' },
-  { id: 'bn-j21', label: 'ন্ত', insertText: 'ন্ত', subLabel: 'ন+ত' },
-  { id: 'bn-j22', label: 'ন্স', insertText: 'ন্স', subLabel: 'ন+স' },
-  { id: 'bn-j23', label: 'ম্প', insertText: 'ম্প', subLabel: 'ম+প' },
-  { id: 'bn-j24', label: 'ম্ব', insertText: 'ম্ব', subLabel: 'ম+ব' },
-  { id: 'bn-j25', label: 'ম্ভ', insertText: 'ম্ভ', subLabel: 'ম+ভ' },
-  { id: 'bn-j26', label: 'ভ্র', insertText: 'ভ্র', subLabel: 'ভ+র' },
-  { id: 'bn-j27', label: 'ক্র', insertText: 'ক্র', subLabel: 'ক+র' },
-  { id: 'bn-j28', label: 'গ্র', insertText: 'গ্র', subLabel: 'গ+র' },
-  { id: 'bn-j29', label: 'প্র', insertText: 'প্র', subLabel: 'প+র' },
-  { id: 'bn-j30', label: 'শ্র', insertText: 'শ্র', subLabel: 'শ+র' },
-  { id: 'bn-j31', label: 'দ্ব', insertText: 'দ্ব', subLabel: 'দ+ব' },
-  { id: 'bn-j32', label: 'দ্ধ', insertText: 'দ্ধ', subLabel: 'দ+ধ' },
-  { id: 'bn-j33', label: 'দ্ভ', insertText: 'দ্ভ', subLabel: 'দ+ভ' },
-  { id: 'bn-j34', label: 'হ্ম', insertText: 'হ্ম', subLabel: 'হ+ম' },
-  { id: 'bn-j35', label: 'হ্ন', insertText: 'হ্ন', subLabel: 'হ+ন' },
-  { id: 'bn-j36', label: 'হ্ণ', insertText: 'হ্ণ', subLabel: 'হ+ণ' },
-  { id: 'bn-j37', label: 'শ্ন', insertText: 'শ্ন', subLabel: 'শ+ন' },
-  { id: 'bn-j38', label: 'স্ক', insertText: 'স্ক', subLabel: 'স+ক' },
-  { id: 'bn-j39', label: 'স্ট', insertText: 'স্ট', subLabel: 'স+ট' },
-  { id: 'bn-j40', label: 'স্প', insertText: 'স্প', subLabel: 'স+প' },
-  { id: 'bn-j41', label: 'স্ত', insertText: 'স্ত', subLabel: 'স+ত' },
-  { id: 'bn-j42', label: 'স্থ', insertText: 'স্থ', subLabel: 'স+থ' },
-  { id: 'bn-j43', label: 'স্ন', insertText: 'স্ন', subLabel: 'স+ন' },
-  { id: 'bn-j44', label: 'স্ম', insertText: 'স্ম', subLabel: 'স+ম' },
-  { id: 'bn-j45', label: 'ল্ক', insertText: 'ল্ক', subLabel: 'ল+ক' },
-  { id: 'bn-j46', label: 'ল্প', insertText: 'ল্প', subLabel: 'ল+প' },
-  { id: 'bn-j47', label: 'ল্ট', insertText: 'ল্ট', subLabel: 'ল+ট' },
-  { id: 'bn-j48', label: 'ব্দ', insertText: 'ব্দ', subLabel: 'ব+দ' },
-  { id: 'bn-j49', label: 'ব্ধ', insertText: 'ব্ধ', subLabel: 'ব+ধ' },
-  { id: 'bn-j50', label: 'গ্ধ', insertText: 'গ্ধ', subLabel: 'গ+ধ' },
-  { id: 'bn-j51', label: 'র্ক', insertText: 'র্ক', subLabel: 'রেফ ক' },
-  { id: 'bn-j52', label: 'র্ড', insertText: 'র্ড', subLabel: 'রেফ ড' },
-  { id: 'bn-j53', label: 'র্ষ', insertText: 'র্ষ', subLabel: 'রেফ ষ' },
-  { id: 'bn-j54', label: 'র্ম', insertText: 'র্ম', subLabel: 'রেফ ম' },
+// Bengali Common Conjuncts (যুক্তাক্ষর)
+// Ordered by the Bengali alphabet: the first consonant of each conjunct decides
+// its group, so ক্ষ sits in the ক group and ত্র in the ত group.
+const BENGALI_CONJUNCT_TEXTS: string[] = [
+  'ক্ষ', 'ক্ত', 'ক্ট', 'ক্ন', 'ক্ব', 'ক্ম', 'ক্য', 'ক্র', 'ক্ল', 'কঁ',
+  'খ্য', 'খ্র',
+  'গ্ধ', 'গ্ন', 'গ্ব', 'গ্ম', 'গ্র', 'গ্ল', 'ঘ্ন', 'ঘ্র',
+  'ঙ্ক', 'ঙ্গ', 'ঙ্ঘ',
+  'চ্চ', 'চ্ছ', 'চ্ঞ',
+  'জ্জ', 'জ্ঞ', 'জ্র',
+  'ঞ্চ', 'ঞ্ছ', 'ঞ্জ',
+  'ট্ট', 'ট্র',
+  'ড্ড', 'ড্র',
+  'ণ্ড', 'ণ্ট', 'ণ্ণ', 'ণ্ম',
+  'ত্ত', 'ত্থ', 'ত্ন', 'ত্ম', 'ত্র', 'ত্রু',
+  'দ্দ', 'দ্ব', 'দ্ধ', 'দ্ভ', 'দ্র',
+  'ন্দ', 'ন্ধ', 'ন্ত', 'ন্ন', 'ন্স', 'ন্য', 'ন্র',
+  'প্প', 'প্ত', 'প্ন', 'প্ল', 'প্র', 'প্স',
+  'ফ্র', 'ফ্ল',
+  'ব্দ', 'ব্ধ', 'ব্জ', 'ব্র', 'ব্ল',
+  'ভ্র', 'ভ্ল',
+  'ম্প', 'ম্ভ', 'ম্ব', 'ম্ন', 'ম্ল', 'ম্র',
+  'র্ক', 'র্ড', 'র্ষ', 'র্ম', 'র্ন', 'র্থ', 'র্শ', 'র্স',
+  'ল্ক', 'ল্ট', 'ল্প', 'ল্ম', 'ল্ব', 'ল্ল',
+  'শ্চ', 'শ্ছ', 'শ্ন', 'শ্র', 'শ্ল',
+  'ষ্ক', 'ষ্ট', 'ষ্ঠ', 'ষ্ণ', 'ষ্প', 'ষ্ম',
+  'স্ক', 'স্ট', 'স্প', 'স্ত', 'স্থ', 'স্ন', 'স্ম', 'স্র', 'স্ল',
+  'হ্ম', 'হ্ন', 'হ্ণ', 'হ্র', 'হ্ল',
 ];
+
+const BENGALI_ALPHABET_ORDER = [
+  'অ', 'আ', 'ই', 'ঈ', 'উ', 'ঊ', 'ঋ', 'এ', 'ঐ', 'ও', 'ঔ',
+  'ক', 'খ', 'গ', 'ঘ', 'ঙ', 'চ', 'ছ', 'জ', 'ঝ', 'ঞ',
+  'ট', 'ঠ', 'ড', 'ঢ', 'ণ', 'ত', 'থ', 'দ', 'ধ', 'ন',
+  'প', 'ফ', 'ব', 'ভ', 'ম', 'য', 'র', 'ল', 'শ', 'ষ', 'স', 'হ',
+  'ড়', 'ঢ়', 'য়', 'ৎ', 'ং', 'ঃ', 'ঁ',
+];
+
+const getBengaliSortWeight = (text: string): number[] =>
+  Array.from(text.replace(/্/g, '')).map((char) => {
+    const index = BENGALI_ALPHABET_ORDER.indexOf(char);
+    return index === -1 ? 100 + (char.codePointAt(0) ?? 0) / 1000 : index;
+  });
+
+const compareBengali = (a: string, b: string): number => {
+  const weightA = getBengaliSortWeight(a);
+  const weightB = getBengaliSortWeight(b);
+  const length = Math.min(weightA.length, weightB.length);
+
+  for (let i = 0; i < length; i += 1) {
+    if (weightA[i] !== weightB[i]) return weightA[i] - weightB[i];
+  }
+
+  if (weightA.length !== weightB.length) return weightA.length - weightB.length;
+  return a.localeCompare(b);
+};
+
+export const BENGALI_CONJUNCTS: KeyItem[] = [...BENGALI_CONJUNCT_TEXTS]
+  .sort(compareBengali)
+  .map((text, index) => ({
+    id: `bn-j${index + 1}`,
+    label: text,
+    insertText: text,
+    subLabel: text.split('্').filter(Boolean).join('+'),
+  }));
 
 // Bengali Kars (কার চিহ্ন ও ফলা)
 export const BENGALI_KARS: KeyItem[] = [
@@ -176,6 +196,7 @@ export const BENGALI_NUMBERS_PUNCT: KeyItem[] = [
   { id: 'bn-p13', label: '(', insertText: '(' },
   { id: 'bn-p14', label: ')', insertText: ')' },
   { id: 'bn-p15', label: '/', insertText: '/' },
+  ...makeSymbolKeys('bn-x', ['-', '/', '(', ')', '"', "'"]),
 ];
 
 
@@ -293,6 +314,7 @@ export const ARABIC_NUMERALS_PUNCT: KeyItem[] = [
   { id: 'ar-p8', label: ':', insertText: ':' },
   { id: 'ar-p9', label: '(', insertText: '(' },
   { id: 'ar-p10', label: ')', insertText: ')' },
+  ...makeSymbolKeys('ar-x', ['!', ':', '(', ')']),
 ];
 
 
@@ -389,6 +411,7 @@ export const ENGLISH_NUMBERS_SYMBOLS: KeyItem[] = [
   { id: 'en-s-18', label: ';', insertText: ';' },
   { id: 'en-s-19', label: ',', insertText: ',' },
   { id: 'en-s-20', label: '.', insertText: '.' },
+  ...makeSymbolKeys('en-x', ['@', '#', '$', '%', '&', '*', '-', '+', '=', '(', ')', '/', '!', '?', '"', "'", ':', ';']),
 ];
 
 
@@ -482,6 +505,10 @@ export const URDU_DIGITS: KeyItem[] = [
   { id: 'ur-d8', label: '۸', insertText: '۸' },
   { id: 'ur-d9', label: '۹', insertText: '۹' },
   { id: 'ur-d0', label: '۰', insertText: '۰' },
+  { id: 'ur-xp1', label: '،', insertText: '،', subLabel: 'کوما' },
+  { id: 'ur-xp2', label: '؛', insertText: '؛', subLabel: 'سیمی کولن' },
+  { id: 'ur-xp3', label: '؟', insertText: '؟', subLabel: 'سوالیہ' },
+  ...makeSymbolKeys('ur-x'),
 ];
 
 // -------------------------------------------------------------
@@ -507,14 +534,14 @@ const SUB_TABS: Record<LanguageId, SubTabDef[]> = {
     { id: 'all-serial', label: '১-৪৯ বর্ণমালা' },
     { id: 'conjuncts', label: 'যুক্ত হরফ (ক্ষ,ত্র..)' },
     { id: 'kars', label: 'কার ও চিহ্ন' },
-    { id: 'numbers', label: 'সংখ্যা ও যতি' },
+    { id: 'numbers', label: 'সংখ্যা ও চিহ্ন' },
   ],
   arabic: [
     { id: 'alphabet', label: 'الحروف (ا-ي)' },
     { id: 'alif-variants', label: 'আলিফের রূপ (أ,إ,أُ..)' },
     { id: 'tashkeel', label: 'হরকত ও তাশদীদ (َ ِ ُ ْ ّ)' },
     { id: 'honorifics', label: 'ইসলামিক চিহ্ন (ﷺ..)' },
-    { id: 'numbers', label: 'الأرقام (١٢٣)' },
+    { id: 'numbers', label: 'الأرقام والرموز (١٢٣)' },
   ],
   english: [
     { id: 'lower', label: 'lowercase (a-z)' },
@@ -524,7 +551,7 @@ const SUB_TABS: Record<LanguageId, SubTabDef[]> = {
   urdu: [
     { id: 'alphabet', label: 'حروف تہجی (ا-ے)' },
     { id: 'signs', label: 'اعراب و علامات (ؔ ؐ ؕ)' },
-    { id: 'digits', label: 'اعداد (۱۲۳)' },
+    { id: 'digits', label: 'اعداد و علامات (۱۲۳)' },
   ],
 };
 

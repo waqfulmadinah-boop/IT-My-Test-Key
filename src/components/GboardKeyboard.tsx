@@ -167,7 +167,7 @@ export const GboardKeyboard: React.FC<GboardKeyboardProps> = ({
   return (
     <div
       className={`w-full ${theme.keyboardChassis} ${
-        imeMode ? 'border-t-0 pt-1 pb-1.5' : 'border-t pt-1.5 pb-2.5'
+        imeMode ? 'h-full border-t-0 pt-1 pb-1.5' : 'border-t pt-1.5 pb-2.5'
       } px-1 sm:px-2 flex flex-col select-none touch-manipulation transition-colors duration-200`}
     >
       {/* Compact sub-tab strip (native IME only) */}
@@ -229,6 +229,16 @@ export const GboardKeyboard: React.FC<GboardKeyboardProps> = ({
       {/* Gboard Bottom Action Row: ?123, Globe, Spacebar, Enter, Backspace */}
       <div className="w-full flex items-center justify-between gap-1 sm:gap-1.5 mt-1.5 px-0.5">
         {/* Toggle Mode / Numbers / Case */}
+        {currentLanguage === 'bengali' && (
+          <button
+            type="button"
+            onClick={() => onKeyPress('্')}
+            className={`w-12 sm:w-14 h-12 rounded-lg flex items-center justify-center ${theme.actionKeyBg} ${theme.actionKeyText} border ${theme.keyBorder} active:scale-95 transition-all text-xl font-semibold`}
+            title="হসন্ত (্)"
+          >
+            ্
+          </button>
+        )}
         {currentLanguage === 'english' ? (
           <button
             type="button"
